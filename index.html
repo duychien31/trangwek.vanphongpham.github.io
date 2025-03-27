@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyShop - Cửa hàng đồ dùng học tập</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="userView" class="page-container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="#" onclick="showHomePage()">StudyShop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showHomePage()">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="filterProductsByCategory('all')">Sản phẩm</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Danh mục
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#" onclick="filterProductsByCategory('Văn phòng phẩm')">Văn phòng phẩm</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterProductsByCategory('Sách vở')">Sách vở</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterProductsByCategory('Balo')">Balo</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterProductsByCategory('Thiết bị điện tử')">Thiết bị điện tử</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showOrders()">Đơn hàng</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 position-relative cart-icon">
+                            <a href="#" class="text-dark" onclick="showCart()">
+                                <i class="fas fa-shopping-cart fa-lg"></i>
+                                <span class="cart-count">0</span>
+                            </a>
+                        </div>
+                        <div id="userActions">
+                            <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                        </div>
+                        <div id="userInfo" style="display: none;">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user me-1"></i> <span id="username">User</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#" onclick="showOrders()">Đơn hàng của tôi</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="adminLink" style="display: none;" onclick="switchToAdmin()">Quản trị viên</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="logout()">Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <!-- Hero Section -->
+            <section id="heroSection" class="hero-section">
+                <div class="container hero-content">
+                    <h1>Đồ dùng học tập chất lượng cao</h1>
+                    <p class="lead mb-4">Mang đến những sản phẩm tốt nhất cho việc học tập và làm việc của bạn</p>
+                    <button class="btn btn-primary btn-lg" onclick="filterProductsByCategory('all')">Mua sắm ngay</button>
+                </div>
+            </section>
+
+            <!-- Featured Products -->
+            <section class="py-5">
+                <div class="container">
+                    <h2 class="text-center mb-4">Sản phẩm nổi bật</h2>
+                    <div class="row" id="featuredProducts">
+                        <!-- Products will be added here dynamically -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Products Section -->
+            <section id="productsSection" class="py-5 bg-light" style="display: none;">
+                <div class="container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 id="productsTitle">Tất cả sản phẩm</h2>
+                        <div class="input-group w-auto">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                            <button class="btn btn-primary" onclick="searchProducts()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" id="productsList">
+                        <!-- Products will be added here dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="ordersSection" class="py-5" style="display: none;">
+                <div class="container">
+                    <h2 class="mb-4">Đơn hàng của tôi</h2>
+                    <div id="ordersList">
+                        <!-- Orders will be added here dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cart Section -->
+            <section id="cartSection" class="py-5" style="display: none;">
+                <div class="container">
+                    <h2 class="mb-4">Giỏ hàng</h2>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush" id="cartItems">
+                                        <!-- Cart items will be added here dynamically -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Tổng đơn hàng</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="d-flex justify-content-between">
+                                        <span>Tổng tiền:</span>
+                                        <strong id="cartTotal">0 VNĐ</strong>
+                                    </p>
+                                    <button class="btn btn-success w-100" onclick="checkout()">Thanh toán</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <h5>StudyShop</h5>
+                        <p>Cung cấp đồ dùng học tập chất lượng cao với giá cả hợp lý.</p>
+                    </div>
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <h5>Liên hệ</h5>
+                        <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường Học Tập, Quận 1, TP.HCM</p>
+                        <p><i class="fas fa-phone me-2"></i> (028) 1234 5678</p>
+                        <p><i class="fas fa-envelope me-2"></i> info@studyshop.vn</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h5>Theo dõi chúng tôi</h5>
+                        <div class="d-flex">
+                            <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                            <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-tiktok fa-lg"></i></a>
+                        </div>
+                        <div class="mt-3">
+                            <input type="email" class="form-control mb-2" placeholder="Email của bạn">
+                            <button class="btn btn-light btn-sm">Đăng ký nhận tin</button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4 bg-light">
+                <div class="text-center">
+                    <p class="mb-0">&copy; 2025 StudyShop. Tất cả quyền được bảo lưu.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Admin Dashboard (sẽ được tạo động khi cần) -->
+    <div id="adminView"></div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="loginUsername" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="loginUsername">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="loginPassword">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="login()">Đăng nhập</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="modalProductImage" class="img-fluid rounded" src="" alt="">
+                        </div>
+                        <div class="col-md-6">
+                            <h3 id="modalProductName"></h3>
+                            <span id="modalProductCategory" class="product-category"></span>
+                            <h4 id="modalProductPrice" class="text-primary mb-3"></h4>
+                            <p id="modalProductDescription"></p>
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="productQuantity" class="me-3">Số lượng:</label>
+                                <div class="input-group" style="width: 130px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">-</button>
+                                    <input type="number" id="productQuantity" class="form-control text-center" value="1" min="1">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
+                                </div>
+                            </div>
+                            <button id="addToCartBtn" class="btn btn-primary w-100">Thêm vào giỏ hàng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
